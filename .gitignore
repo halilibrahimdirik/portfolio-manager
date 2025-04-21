@@ -1,0 +1,13 @@
+# Backend
+portfolio-manager-be/target/
+portfolio-manager-be/.idea/
+portfolio-manager-be/*.iml
+
+# Frontend
+portfolio-manager-ui/node_modules/
+portfolio-manager-ui/build/
+portfolio-manager-ui/.env
+portfolio-manager-ui/npm-debug.log*
+portfolio-manager-ui/yarn-debug.log*
+portfolio-manager-ui/yarn-error.log*
+portfolio-manager-ui/.DS_Store
