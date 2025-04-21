@@ -17,13 +17,20 @@ import {
   Person as ProfileIcon,
   Login as SignInIcon,
   PersonAdd as SignUpIcon,
+  AccountBalance as ETFsIcon,
+  ShowChart as NasdaqIcon
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
+// Remove this duplicate import
+// import { ShowChart as NasdaqIcon } from '@mui/icons-material';
+
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
   { text: 'Stocks', icon: <TablesIcon />, path: '/stocks' },
+  { text: 'ETFs', icon: <ETFsIcon />, path: '/etfs' },
+  { text: 'NASDAQ', icon: <NasdaqIcon />, path: '/nasdaq' },
   { text: 'Billing', icon: <BillingIcon />, path: '/billing' },
   { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },
   { text: 'Profile', icon: <ProfileIcon />, path: '/profile' },

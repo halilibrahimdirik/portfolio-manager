@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './components/Dashboard/Dashboard';
 import Tables from './components/Tables/Tables';
 import Sidebar from './components/Sidebar';
+import ETFs from './components/ETFs/ETFs';
+import NASDAQ from './components/NASDAQ/NASDAQ';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/stocks" element={<Tables />} />
+            <Route path="/etfs" element={<ETFs />} />
+            <Route path="/nasdaq" element={<NASDAQ />} />
           </Routes>
         </Box>
       </Box>
