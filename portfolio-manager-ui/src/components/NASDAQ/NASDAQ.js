@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -8,26 +9,21 @@ import StockDialog from '../Tables/StockDialog';
 const NASDAQ = () => {
   const [open, setOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
-  const [stocks, setStocks] = useState([
-    { 
-      symbol: 'AAPL', 
-      quantity: '100', 
-      price: '$180.25', 
-      dailyChange: '+2.5%',
-      monthlyChange: '+8.3%',
-      value: '$18,025'
-    },
-    { 
-      symbol: 'MSFT', 
-      quantity: '50', 
-      price: '$375.80', 
-      dailyChange: '-0.8%',
-      monthlyChange: '+5.2%',
-      value: '$18,790'
-    },
-  ]);
+  const [stocks, setStocks] = useState([]);
 
-  // ... same handlers as ETFs component ...
+  useEffect(() => {
+    fetchStocks();
+  }, []);
+
+  const fetchStocks = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/nasdaq-stocks');
+      setStocks(response.data);
+    } catch (error) {
+      console.error('Error fetching NASDAQ stocks:', error);
+    }
+  };
+
   const handleClickOpen = (stock = null) => {
     setSelectedStock(stock);
     setOpen(true);
@@ -38,23 +34,39 @@ const NASDAQ = () => {
     setOpen(false);
   };
 
-  const handleSave = (stockData) => {
-    if (selectedStock) {
-      setStocks(stocks.map(stock => 
-        stock.symbol === selectedStock.symbol ? { ...stock, ...stockData } : stock
-      ));
-    } else {
-      setStocks([...stocks, {
-        ...stockData,
-        dailyChange: '+0.0%',
-        monthlyChange: '+0.0%',
-        value: `$${(parseFloat(stockData.price) * parseInt(stockData.quantity)).toFixed(2)}`
-      }]);
+  const handleSave = async (stockData) => {
+    try {
+      const formattedStock = {
+        symbol: stockData.symbol,
+        quantity: parseInt(stockData.quantity),
+        price: parseFloat(stockData.price),
+        dailyChange: stockData.dailyChange || '+0.0%',
+        monthlyChange: stockData.monthlyChange || '+0.0%',
+        value: parseFloat(stockData.price) * parseInt(stockData.quantity)
+      };
+
+      if (selectedStock) {
+        await axios.put(`http://localhost:8080/api/nasdaq-stocks/${selectedStock.id}`, {
+          id: selectedStock.id,
+          ...formattedStock
+        });
+      } else {
+        await axios.post('http://localhost:8080/api/nasdaq-stocks', formattedStock);
+      }
+      fetchStocks();
+      handleClose();
+    } catch (error) {
+      console.error('Error saving NASDAQ stock:', error);
     }
   };
 
-  const handleDelete = (stockToDelete) => {
-    setStocks(stocks.filter(stock => stock.symbol !== stockToDelete.symbol));
+  const handleDelete = async (stockToDelete) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/nasdaq-stocks/${stockToDelete.id}`);
+      fetchStocks(); // Refresh the list
+    } catch (error) {
+      console.error('Error deleting NASDAQ stock:', error);
+    }
   };
 
   return (
@@ -85,10 +97,10 @@ const NASDAQ = () => {
           </TableHead>
           <TableBody>
             {stocks.map((stock) => (
-              <TableRow key={stock.symbol}>
+              <TableRow key={stock.id}>  {/* Changed from stock.symbol to stock.id */}
                 <TableCell>{stock.symbol}</TableCell>
                 <TableCell>{stock.quantity}</TableCell>
-                <TableCell>{stock.price}</TableCell>
+                <TableCell>${stock.price.toFixed(2)}</TableCell>
                 <TableCell>
                   <Box
                     sx={{
