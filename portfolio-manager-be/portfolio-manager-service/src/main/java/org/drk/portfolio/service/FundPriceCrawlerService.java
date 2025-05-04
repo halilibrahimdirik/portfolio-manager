@@ -97,7 +97,6 @@ public class FundPriceCrawlerService {
     }
 
     private void persistFundPrices(String fundCode, List<String> dates, List<Double> prices) {
-        List<FundPrice> fundPrices = new ArrayList<>();
         for (int i = 0; i < dates.size(); i++) {
             try {
                 String[] dateParts = dates.get(i).split("\\.");
@@ -108,14 +107,18 @@ public class FundPriceCrawlerService {
                 fundPrice.setPriceDate(Date.valueOf(formattedDate));
                 fundPrice.setPrice(prices.get(i));
                 
-                fundPrices.add(fundPrice);
+                try {
+                    fundPriceRepository.save(fundPrice);
+                } catch (Exception e) {
+                    if (e.getMessage().contains("duplicate key value")) {
+                        log.info("Skipping duplicate entry for fund {} on date {}", fundCode, formattedDate);
+                        continue;
+                    }
+                    throw e;
+                }
             } catch (Exception e) {
                 log.error("Error processing date {} for fund {}: {}", dates.get(i), fundCode, e.getMessage());
             }
         }
-
-        fundPriceRepository.saveAll(fundPrices);
     }
-
-
 }
