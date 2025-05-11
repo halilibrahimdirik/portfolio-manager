@@ -20,7 +20,7 @@ import {
   TrendingUp as BistIcon
 } from '@mui/icons-material';
 
-const drawerWidth = 240;
+const drawerWidth = 244;
 
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },

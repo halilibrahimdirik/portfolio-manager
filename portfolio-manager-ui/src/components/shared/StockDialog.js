@@ -12,7 +12,8 @@ const StockDialog = ({ open, handleClose, stock, handleSave }) => {
   const [formData, setFormData] = React.useState({
     symbol: '',
     quantity: '',
-    price: ''
+    price: '',
+    purchasePrice: ''  // Add purchase price field
   });
 
   React.useEffect(() => {
@@ -20,13 +21,15 @@ const StockDialog = ({ open, handleClose, stock, handleSave }) => {
       setFormData({
         symbol: stock.name || '',
         quantity: stock.quantity || '',
-        price: stock.currentPrice || ''
+        price: stock.currentPrice || '',
+        purchasePrice: stock.purchasePrice || ''  // Initialize purchase price
       });
     } else {
       setFormData({
         symbol: '',
         quantity: '',
-        price: ''
+        price: '',
+        purchasePrice: ''  // Reset purchase price
       });
     }
   }, [stock]);
@@ -76,6 +79,16 @@ const StockDialog = ({ open, handleClose, stock, handleSave }) => {
           fullWidth
           variant="standard"
           value={formData.price}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="dense"
+          name="purchasePrice"
+          label="Purchase Price"
+          type="number"
+          fullWidth
+          variant="standard"
+          value={formData.purchasePrice}
           onChange={handleChange}
         />
       </DialogContent>

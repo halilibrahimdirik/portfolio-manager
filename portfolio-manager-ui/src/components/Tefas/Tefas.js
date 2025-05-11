@@ -41,7 +41,7 @@ const Tefas = () => {
         name: stockData.symbol,
         quantity: parseFloat(stockData.quantity),
         currentPrice: parseFloat(stockData.price),
-        purchasePrice: parseFloat(stockData.price),
+        purchasePrice: parseFloat(stockData.purchasePrice), // Use the purchase price from form
         purchaseDate: new Date().toISOString().split('T')[0],
         type: 'TEFAS'
       };
@@ -90,38 +90,47 @@ const Tefas = () => {
               <TableCell>Purchase Price</TableCell>
               <TableCell>Total Value</TableCell>
               <TableCell>Purchase Date</TableCell>
+              <TableCell>Total Profit</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {stocks.map((stock) => (
-              <TableRow key={stock.id}>
-                <TableCell>{stock.name}</TableCell>
-                <TableCell>{stock.quantity}</TableCell>
-                <TableCell>${stock.currentPrice.toFixed(2)}</TableCell>
-                <TableCell>${stock.purchasePrice.toFixed(2)}</TableCell>
-                <TableCell>${(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
-                <TableCell>{new Date(stock.purchaseDate).toLocaleDateString()}</TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex' }}>
-                    <IconButton 
-                      size="small" 
-                      onClick={() => handleClickOpen(stock)}
-                      color="primary"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton 
-                      size="small" 
-                      onClick={() => handleDelete(stock)}
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
+            {stocks.map((stock) => {
+              const profitPercentage = ((stock.currentPrice - stock.purchasePrice) / stock.purchasePrice) * 100;
+              const profitColor = profitPercentage >= 0 ? 'success.main' : 'error.main';
+              
+              return (
+                <TableRow key={stock.id}>
+                  <TableCell>{stock.name}</TableCell>
+                  <TableCell>{stock.quantity}</TableCell>
+                  <TableCell>₺{stock.currentPrice.toFixed(2)}</TableCell>
+                  <TableCell>₺{stock.purchasePrice.toFixed(2)}</TableCell>
+                  <TableCell>₺{(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
+                  <TableCell>{new Date(stock.purchaseDate).toLocaleDateString()}</TableCell>
+                  <TableCell sx={{ color: profitColor }}>
+                    {profitPercentage.toFixed(2)}%
+                  </TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex' }}>
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleClickOpen(stock)}
+                        color="primary"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleDelete(stock)}
+                        color="error"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
