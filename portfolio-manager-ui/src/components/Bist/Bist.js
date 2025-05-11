@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import StockDialog from '../shared/StockDialog';
 
-const Nasdaq = () => {
+const Bist = () => {
   const [open, setOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
   const [stocks, setStocks] = useState([]);
@@ -17,10 +17,10 @@ const Nasdaq = () => {
 
   const fetchStocks = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/assets/NASDAQ');
+      const response = await axios.get('http://localhost:8080/api/assets/BIST');
       setStocks(response.data);
     } catch (error) {
-      console.error('Error fetching NASDAQ stocks:', error);
+      console.error('Error fetching BIST stocks:', error);
     }
   };
 
@@ -43,7 +43,7 @@ const Nasdaq = () => {
         currentPrice: parseFloat(stockData.price),
         purchasePrice: parseFloat(stockData.price),
         purchaseDate: new Date().toISOString().split('T')[0],
-        type: 'NASDAQ'  // Matches AssetType enum
+        type: 'BIST'
       };
 
       if (selectedStock) {
@@ -54,7 +54,7 @@ const Nasdaq = () => {
       fetchStocks();
       handleClose();
     } catch (error) {
-      console.error('Error saving NASDAQ stock:', error);
+      console.error('Error saving BIST stock:', error);
     }
   };
 
@@ -63,21 +63,21 @@ const Nasdaq = () => {
       await axios.delete(`http://localhost:8080/api/assets/${stockToDelete.id}`);
       fetchStocks();
     } catch (error) {
-      console.error('Error deleting NASDAQ stock:', error);
+      console.error('Error deleting BIST stock:', error);
     }
   };
 
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5">Nasdaq Stocks</Typography>
+        <Typography variant="h5">BIST Stocks</Typography>
         <Button
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
           onClick={() => handleClickOpen()}
         >
-          Add New Nasdaq Stock
+          Add New BIST Stock
         </Button>
       </Box>
       <TableContainer component={Paper}>
@@ -98,9 +98,9 @@ const Nasdaq = () => {
               <TableRow key={stock.id}>
                 <TableCell>{stock.name}</TableCell>
                 <TableCell>{stock.quantity}</TableCell>
-                <TableCell>${stock.currentPrice.toFixed(2)}</TableCell>
-                <TableCell>${stock.purchasePrice.toFixed(2)}</TableCell>
-                <TableCell>${(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
+                <TableCell>₺{stock.currentPrice.toFixed(2)}</TableCell>
+                <TableCell>₺{stock.purchasePrice.toFixed(2)}</TableCell>
+                <TableCell>₺{(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
                 <TableCell>{new Date(stock.purchaseDate).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <Box sx={{ display: 'flex' }}>
@@ -135,4 +135,4 @@ const Nasdaq = () => {
   );
 };
 
-export default Nasdaq;
+export default Bist;

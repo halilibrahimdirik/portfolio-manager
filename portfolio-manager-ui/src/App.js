@@ -2,10 +2,10 @@ import React from 'react';
 import { Box, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './components/Dashboard/Dashboard';
-import Tables from './components/Tables/Tables';
 import Sidebar from './components/Sidebar';
-import ETFs from './components/ETFs/ETFs';
-import NASDAQ from './components/NASDAQ/NASDAQ';
+import Nasdaq from './components/Nasdaq/Nasdaq';
+import Tefas from './components/Tefas/Tefas';
+import Bist from './components/Bist/Bist';
 
 function App() {
   return (
@@ -17,9 +17,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/stocks" element={<Tables />} />
-            <Route path="/etfs" element={<ETFs />} />
-            <Route path="/nasdaq" element={<NASDAQ />} />
+            <Route path="/nasdaq" element={<Nasdaq />} />
+            <Route path="/bist" element={<Bist />} />
+            <Route path="/tefas" element={<Tefas />} />
           </Routes>
         </Box>
       </Box>

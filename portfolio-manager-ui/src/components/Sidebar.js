@@ -11,31 +11,26 @@ import {
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
-  TableChart as TablesIcon,
-  Receipt as BillingIcon,
   Notifications as NotificationsIcon,
   Person as ProfileIcon,
   Login as SignInIcon,
   PersonAdd as SignUpIcon,
-  AccountBalance as ETFsIcon,
-  ShowChart as NasdaqIcon
+  ShowChart as NasdaqIcon,
+  Assessment as TefasIcon,
+  TrendingUp as BistIcon
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
 
-// Remove this duplicate import
-// import { ShowChart as NasdaqIcon } from '@mui/icons-material';
-
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  { text: 'Stocks', icon: <TablesIcon />, path: '/stocks' },
-  { text: 'ETFs', icon: <ETFsIcon />, path: '/etfs' },
-  { text: 'NASDAQ', icon: <NasdaqIcon />, path: '/nasdaq' },
-  { text: 'Billing', icon: <BillingIcon />, path: '/billing' },
+  { text: 'Tefas', icon: <TefasIcon />, path: '/tefas' },
+  { text: 'Bist', icon: <BistIcon />, path: '/bist' },
+  { text: 'Nasdaq', icon: <NasdaqIcon />, path: '/nasdaq' },
   { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },
   { text: 'Profile', icon: <ProfileIcon />, path: '/profile' },
   { text: 'Sign In', icon: <SignInIcon />, path: '/signin' },
-  { text: 'Sign Up', icon: <SignUpIcon />, path: '/signup' },
+  { text: 'Sign Up', icon: <SignUpIcon />, path: '/signup' }
 ];
 
 const Sidebar = () => {
