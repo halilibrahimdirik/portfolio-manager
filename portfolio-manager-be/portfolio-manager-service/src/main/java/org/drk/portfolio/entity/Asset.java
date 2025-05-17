@@ -6,17 +6,33 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
-@Table(name = "assets")
+@Table(name = "asset") // Change from "assets" to "asset"
 @Data
 public class Asset {
     @Id
     private String id;
-    private String name;
+    
+    @Column(name = "asset_name")
+    private String assetName;
+
+    @Column(name = "asset_code")
+    private String assetCode;
+    
+    // Remove the unused 'name' field since we now use assetName
+    
+    @Column(name = "current_price")
     private BigDecimal currentPrice;
+    
+    @Column(name = "purchase_price")
     private BigDecimal purchasePrice;
+    
+    @Column(name = "quantity")
     private BigDecimal quantity;
+    
+    @Column(name = "purchase_date")
     private Date purchaseDate;
     
     @Enumerated(EnumType.STRING)
+    @Column(name = "type")
     private AssetType type;
 }

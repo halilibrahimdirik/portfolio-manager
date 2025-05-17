@@ -18,3 +18,7 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.ws.client: DEBUG
     org.springframework.ws.server: DEBUG
+
+tefas:
+  import:
+    pdf-path: ${user.dir}/portfolio-manager-service/src/main/resources/import/tefas/Fonlar_YKB.csv

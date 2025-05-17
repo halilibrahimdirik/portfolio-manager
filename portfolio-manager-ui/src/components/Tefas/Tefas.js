@@ -38,10 +38,11 @@ const Tefas = () => {
     try {
       const formattedStock = {
         id: stockData.symbol,
-        name: stockData.symbol,
+        assetName: stockData.symbol,
+        assetCode: stockData.symbol,
         quantity: parseFloat(stockData.quantity),
         currentPrice: parseFloat(stockData.price),
-        purchasePrice: parseFloat(stockData.purchasePrice), // Use the purchase price from form
+        purchasePrice: parseFloat(stockData.purchasePrice),
         purchaseDate: new Date().toISOString().split('T')[0],
         type: 'TEFAS'
       };
@@ -84,7 +85,8 @@ const Tefas = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Symbol</TableCell>
+              <TableCell>Fund Name</TableCell>
+              <TableCell>Fund Code</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Current Price</TableCell>
               <TableCell>Purchase Price</TableCell>
@@ -101,7 +103,8 @@ const Tefas = () => {
               
               return (
                 <TableRow key={stock.id}>
-                  <TableCell>{stock.name}</TableCell>
+                  <TableCell>{stock.assetName}</TableCell>
+                  <TableCell>{stock.assetCode}</TableCell>
                   <TableCell>{stock.quantity}</TableCell>
                   <TableCell>₺{stock.currentPrice.toFixed(2)}</TableCell>
                   <TableCell>₺{stock.purchasePrice.toFixed(2)}</TableCell>
