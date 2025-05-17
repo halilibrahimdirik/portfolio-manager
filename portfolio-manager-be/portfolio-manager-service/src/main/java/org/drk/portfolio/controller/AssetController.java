@@ -40,7 +40,7 @@ public class AssetController {
             }
             
             for (Asset asset : assets) {
-                FundPrice latestPrice = fundPriceService.getLatestPrice(asset.getId(), priceDate);
+                FundPrice latestPrice = fundPriceService.getLatestPrice(asset.getAssetCode(), priceDate);
                 if (latestPrice != null) {
                     asset.setCurrentPrice(BigDecimal.valueOf(latestPrice.getPrice()));
                 }

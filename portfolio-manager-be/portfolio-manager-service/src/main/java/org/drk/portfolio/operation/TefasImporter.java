@@ -174,6 +174,8 @@ public class TefasImporter {
                 cleaned = cleaned.replace(".", "").replace(",", ".");
             } else if (cleaned.contains(",")) {
                 cleaned = cleaned.replace(",", ".");
+            }else if (cleaned.contains(".")) {
+                cleaned = cleaned.replace(".", "");
             }
             return Double.parseDouble(cleaned);
         } catch (NumberFormatException e) {

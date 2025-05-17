@@ -28,7 +28,7 @@ public class FundPriceCrawlerService {
     private FundPriceRepository fundPriceRepository;
 
     private static final String TEFAS_URL = "https://www.tefas.gov.tr/FonAnaliz.aspx?FonKod=%s";
-    private static final String[] FUND_CODES = {"NNF", "AN1", "IPB"}; // Add more fund codes as needed
+    private static final String[] FUND_CODES = {"NNF", "AN1", "IPB","BVZ"}; // Add more fund codes as needed
 
     // Run every day at 21:00 and 10:00
     @Scheduled(cron = "0 0 21 * * ?") // 21:00
