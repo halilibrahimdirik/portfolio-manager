@@ -33,6 +33,7 @@ public class FundPriceCrawlerService {
     private AssetRepository assetRepository;  // Add this
 
     private static final String TEFAS_URL = "https://www.tefas.gov.tr/FonAnaliz.aspx?FonKod=%s";
+    private static final long DELAY_BETWEEN_REQUESTS = 10000; // 10 seconds in milliseconds
 
     @Scheduled(cron = "0 0 21 * * ?") // 21:00
     @Scheduled(cron = "0 0 10 * * ?") // 10:00
@@ -43,9 +44,14 @@ public class FundPriceCrawlerService {
             try {
                 if (fundCode != null && !fundCode.isEmpty()) {
                     crawlFundData(fundCode);
+                    Thread.sleep(DELAY_BETWEEN_REQUESTS);
                 }
             } catch (IOException e) {
                 log.error("Error crawling fund {}: {}", fundCode, e.getMessage());
+            } catch (InterruptedException e) {
+                log.error("Sleep interrupted while waiting between requests", e);
+                Thread.currentThread().interrupt();
+                break;
             }
         }
     }
@@ -53,7 +59,25 @@ public class FundPriceCrawlerService {
     public void crawlFundData(String fundCode) throws IOException {
         // Send GET request and parse HTML
         String url = String.format(TEFAS_URL, fundCode);
-        Document doc = Jsoup.connect(url).get();
+        Document doc = Jsoup.connect(url)
+                .userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8")
+                .header("Accept-Language", "en-US,en;q=0.5")
+                .header("Connection", "keep-alive")
+                .header("Upgrade-Insecure-Requests", "1")
+                .header("Sec-Fetch-Dest", "document")
+                .header("Sec-Fetch-Mode", "navigate")
+                .header("Sec-Fetch-Site", "none")
+                .header("Sec-Fetch-User", "?1")
+                .timeout(30000)
+                .followRedirects(true)
+                .get();
+
+        // Check if we got the anti-bot page
+        if (doc.html().contains("This question is for testing whether you are a human visitor")) {
+            log.error("Anti-bot protection detected for fund code: {}", fundCode);
+            throw new IOException("Access blocked by anti-bot protection");
+        }
 
         // Extract Highcharts script
         String scriptContent = doc.select("script:containsData(chartMainContent_FonFiyatGrafik)").html();

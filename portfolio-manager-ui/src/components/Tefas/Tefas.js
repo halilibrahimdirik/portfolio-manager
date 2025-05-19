@@ -91,7 +91,6 @@ const Tefas = () => {
               <TableCell>Current Price</TableCell>
               <TableCell>Purchase Price</TableCell>
               <TableCell>Total Value</TableCell>
-              <TableCell>Purchase Date</TableCell>
               <TableCell>Total Profit</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -104,13 +103,12 @@ const Tefas = () => {
               return (
                 <TableRow key={stock.id}>
                   <TableCell>{stock.assetName}</TableCell>
-                  <TableCell>{stock.assetCode}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>{stock.assetCode}</TableCell>
                   <TableCell>{stock.quantity}</TableCell>
-                  <TableCell>₺{stock.currentPrice.toFixed(2)}</TableCell>
-                  <TableCell>₺{stock.purchasePrice.toFixed(2)}</TableCell>
-                  <TableCell>₺{(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
-                  <TableCell>{new Date(stock.purchaseDate).toLocaleDateString()}</TableCell>
-                  <TableCell sx={{ color: profitColor }}>
+                  <TableCell>₺{stock.currentPrice}</TableCell>
+                  <TableCell>₺{stock.purchasePrice}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>₺{(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
+                  <TableCell sx={{ color: profitColor, fontWeight: 'bold' }}>
                     {profitPercentage.toFixed(2)}%
                   </TableCell>
                   <TableCell>
