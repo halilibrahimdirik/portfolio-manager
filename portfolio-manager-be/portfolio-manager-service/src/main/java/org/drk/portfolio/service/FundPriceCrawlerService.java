@@ -1,7 +1,9 @@
 package org.drk.portfolio.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.drk.portfolio.entity.AssetType;
 import org.drk.portfolio.entity.FundPrice;
+import org.drk.portfolio.repository.AssetRepository;
 import org.drk.portfolio.repository.FundPriceRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,19 +28,24 @@ public class FundPriceCrawlerService {
 
     @Autowired
     private FundPriceRepository fundPriceRepository;
+    
+    @Autowired
+    private AssetRepository assetRepository;  // Add this
 
     private static final String TEFAS_URL = "https://www.tefas.gov.tr/FonAnaliz.aspx?FonKod=%s";
-    private static final String[] FUND_CODES = {"NNF", "AN1", "IPB","BVZ"}; // Add more fund codes as needed
 
-    // Run every day at 21:00 and 10:00
     @Scheduled(cron = "0 0 21 * * ?") // 21:00
     @Scheduled(cron = "0 0 10 * * ?") // 10:00
     public void crawlAndPersistFundPrices() {
-        for (String fundCode : FUND_CODES) {
+        List<String> fundCodes = assetRepository.findDistinctAssetCodesByType(AssetType.TEFAS);
+        
+        for (String fundCode : fundCodes) {
             try {
-                crawlFundData(fundCode);
+                if (fundCode != null && !fundCode.isEmpty()) {
+                    crawlFundData(fundCode);
+                }
             } catch (IOException e) {
-                System.err.println("Error crawling fund " + fundCode + ": " + e.getMessage());
+                log.error("Error crawling fund {}: {}", fundCode, e.getMessage());
             }
         }
     }
