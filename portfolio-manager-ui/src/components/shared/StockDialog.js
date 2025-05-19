@@ -1,100 +1,82 @@
-import React from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button
-} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 
 const StockDialog = ({ open, handleClose, stock, handleSave }) => {
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = useState({
     symbol: '',
     quantity: '',
     price: '',
-    purchasePrice: ''  // Add purchase price field
+    purchasePrice: ''
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (stock) {
       setFormData({
-        symbol: stock.name || '',
-        quantity: stock.quantity || '',
-        price: stock.currentPrice || '',
-        purchasePrice: stock.purchasePrice || ''  // Initialize purchase price
+        symbol: stock.assetCode || '',
+        quantity: stock.quantity?.toString() || '',
+        price: stock.currentPrice?.toString() || '',
+        purchasePrice: stock.purchasePrice?.toString() || ''
       });
     } else {
       setFormData({
         symbol: '',
         quantity: '',
         price: '',
-        purchasePrice: ''  // Reset purchase price
+        purchasePrice: ''
       });
     }
   }, [stock]);
 
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value
-    });
-  };
-
-  const handleSubmit = () => {
-    handleSave(formData);
-  };
-
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>{stock ? 'Edit Stock' : 'Add New Stock'}</DialogTitle>
+      <DialogTitle>{stock ? 'Edit TEFAS Fund' : 'Add New TEFAS Fund'}</DialogTitle>
       <DialogContent>
         <TextField
-          autoFocus
           margin="dense"
-          name="symbol"
-          label="Symbol"
+          label="Fund Code"
           type="text"
           fullWidth
-          variant="standard"
           value={formData.symbol}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, symbol: e.target.value })}
           disabled={!!stock}
         />
         <TextField
           margin="dense"
-          name="quantity"
           label="Quantity"
           type="number"
           fullWidth
-          variant="standard"
           value={formData.quantity}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+          inputProps={{ step: "any" }}
         />
         <TextField
           margin="dense"
-          name="price"
-          label="Price"
+          label="Current Price"
           type="number"
           fullWidth
-          variant="standard"
           value={formData.price}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+          inputProps={{ 
+            step: "0.00001",
+            style: { textAlign: 'right' }
+          }}
         />
         <TextField
           margin="dense"
-          name="purchasePrice"
           label="Purchase Price"
           type="number"
           fullWidth
-          variant="standard"
           value={formData.purchasePrice}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, purchasePrice: e.target.value })}
+          inputProps={{ 
+            step: "0.00001",
+            style: { textAlign: 'right' }
+          }}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Save</Button>
+        <Button onClick={() => handleSave(formData)}>Save</Button>
       </DialogActions>
     </Dialog>
   );

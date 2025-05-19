@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton, Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,10 +10,7 @@ const Tefas = () => {
   const [open, setOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
   const [stocks, setStocks] = useState([]);
-
-  useEffect(() => {
-    fetchStocks();
-  }, []);
+  const [profitSummary, setProfitSummary] = useState(null);
 
   const fetchStocks = async () => {
     try {
@@ -24,9 +21,13 @@ const Tefas = () => {
     }
   };
 
-  const handleClickOpen = (stock = null) => {
-    setSelectedStock(stock);
-    setOpen(true);
+  const fetchProfitSummary = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/assets/TEFAS/profit-summary');
+      setProfitSummary(response.data);
+    } catch (error) {
+      console.error('Error fetching profit summary:', error);
+    }
   };
 
   const handleClose = () => {
@@ -34,18 +35,32 @@ const Tefas = () => {
     setOpen(false);
   };
 
+  const handleClickOpen = (stock = null) => {
+    setSelectedStock(stock);
+    setOpen(true);
+  };
+
+  useEffect(() => {
+    fetchStocks();
+    fetchProfitSummary();
+  }, []);
+
   const handleSave = async (stockData) => {
     try {
       const formattedStock = {
-        id: stockData.symbol,
-        assetName: stockData.symbol,
-        assetCode: stockData.symbol,
+        id: selectedStock ? selectedStock.id : crypto.randomUUID(),
+        assetName: selectedStock ? selectedStock.assetName : stockData.symbol,
+        assetCode: selectedStock ? selectedStock.assetCode : stockData.symbol,
         quantity: parseFloat(stockData.quantity),
         currentPrice: parseFloat(stockData.price),
         purchasePrice: parseFloat(stockData.purchasePrice),
-        purchaseDate: new Date().toISOString().split('T')[0],
+        purchaseDate: selectedStock ? selectedStock.purchaseDate : new Date().toISOString().split('T')[0],
         type: 'TEFAS'
       };
+
+      // Convert to string to preserve decimal precision
+      formattedStock.currentPrice = formattedStock.currentPrice.toString();
+      formattedStock.purchasePrice = formattedStock.purchasePrice.toString();
 
       if (selectedStock) {
         await axios.put(`http://localhost:8080/api/assets/${selectedStock.id}`, formattedStock);
@@ -53,6 +68,7 @@ const Tefas = () => {
         await axios.post('http://localhost:8080/api/assets', formattedStock);
       }
       fetchStocks();
+      fetchProfitSummary();
       handleClose();
     } catch (error) {
       console.error('Error saving TEFAS fund:', error);
@@ -63,6 +79,7 @@ const Tefas = () => {
     try {
       await axios.delete(`http://localhost:8080/api/assets/${stockToDelete.id}`);
       fetchStocks();
+      fetchProfitSummary(); // Refresh summary after delete
     } catch (error) {
       console.error('Error deleting TEFAS fund:', error);
     }
@@ -70,6 +87,29 @@ const Tefas = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      {/* Add Summary Section */}
+      {profitSummary && (
+        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
+          <Grid container spacing={4}>
+            <Grid item>
+              <Typography variant="subtitle1" color="text.secondary">Total Portfolio Value</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                ₺{profitSummary.totalValue}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant="subtitle1" color="text.secondary">Total Profit/Loss</Typography>
+              <Typography variant="h6" sx={{ 
+                fontWeight: 'bold', 
+                color: profitSummary.profitPercentage >= 0 ? 'success.main' : 'error.main' 
+              }}>
+                ₺{profitSummary.totalProfit} ({profitSummary.profitPercentage}%)
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+      )}
+
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5">TEFAS Funds</Typography>
         <Button

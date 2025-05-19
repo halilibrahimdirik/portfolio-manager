@@ -20,10 +20,10 @@ public class Asset {
     
     // Remove the unused 'name' field since we now use assetName
     
-    @Column(name = "current_price")
+    @Column(name = "current_price", precision = 38, scale = 8)
     private BigDecimal currentPrice;
-    
-    @Column(name = "purchase_price")
+
+    @Column(name = "purchase_price", precision = 38, scale = 8)
     private BigDecimal purchasePrice;
     
     @Column(name = "quantity")

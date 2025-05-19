@@ -1,10 +1,20 @@
 package org.drk.portfolio.controller;
 
+import org.drk.portfolio.dto.AssetProfitSummary;
+import org.drk.portfolio.entity.AssetType;
+import org.drk.portfolio.service.AssetProfitService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import lombok.RequiredArgsConstructor;
 import org.drk.portfolio.entity.Asset;
 import org.drk.portfolio.entity.AssetType;
 import org.drk.portfolio.entity.FundPrice;
 import org.drk.portfolio.service.AssetService;
+import org.drk.portfolio.service.AssetProfitService;
 import org.drk.portfolio.service.FundPriceService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +29,7 @@ import java.util.List;
 public class AssetController {
     private final AssetService assetService;
     private final FundPriceService fundPriceService;
+    private final AssetProfitService assetProfitService;
 
     @GetMapping
     public List<Asset> getAllAssets() {
@@ -64,5 +75,10 @@ public class AssetController {
     @DeleteMapping("/{id}")
     public void deleteAsset(@PathVariable String id) {
         assetService.deleteAsset(id);
+    }
+    
+    @GetMapping("/{type}/profit-summary")
+    public ResponseEntity<AssetProfitSummary> getProfitSummary(@PathVariable AssetType type) {
+        return ResponseEntity.ok(assetProfitService.calculateProfitSummary(type));
     }
 }
