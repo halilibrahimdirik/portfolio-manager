@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton, Grid } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton, Grid, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -94,7 +94,7 @@ const Tefas = () => {
             <Grid item>
               <Typography variant="subtitle1" color="text.secondary">Total Portfolio Value</Typography>
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                ₺{profitSummary.totalValue}
+                ₺{Number(profitSummary.totalValue).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </Typography>
             </Grid>
             <Grid item>
@@ -103,7 +103,7 @@ const Tefas = () => {
                 fontWeight: 'bold', 
                 color: profitSummary.profitPercentage >= 0 ? 'success.main' : 'error.main' 
               }}>
-                ₺{profitSummary.totalProfit} ({profitSummary.profitPercentage}%)
+                ₺{Number(profitSummary.totalProfit).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({Number(profitSummary.profitPercentage).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%)
               </Typography>
             </Grid>
           </Grid>
@@ -132,6 +132,7 @@ const Tefas = () => {
               <TableCell>Purchase Price</TableCell>
               <TableCell>Total Value</TableCell>
               <TableCell>Total Profit</TableCell>
+              <TableCell>Monthly Increase</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -145,11 +146,18 @@ const Tefas = () => {
                   <TableCell>{stock.assetName}</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>{stock.assetCode}</TableCell>
                   <TableCell>{stock.quantity}</TableCell>
-                  <TableCell>₺{stock.currentPrice}</TableCell>
-                  <TableCell>₺{stock.purchasePrice}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>₺{(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Tooltip title={stock.priceDate ? new Date(stock.priceDate).toLocaleString('tr-TR') : 'No date available'} arrow placement="top">
+                      <span>₺{Number(stock.currentPrice).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</span>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>₺{Number(stock.purchasePrice).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>₺{Number(stock.currentPrice * stock.quantity).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                   <TableCell sx={{ color: profitColor, fontWeight: 'bold' }}>
                     {profitPercentage.toFixed(2)}%
+                  </TableCell>
+                  <TableCell sx={{ color: stock.monthlyIncrease >= 0 ? 'success.main' : 'error.main', fontWeight: 'bold' }}>
+                    {stock.monthlyIncrease ? `${stock.monthlyIncrease.toFixed(2)}%` : '-'}
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex' }}>

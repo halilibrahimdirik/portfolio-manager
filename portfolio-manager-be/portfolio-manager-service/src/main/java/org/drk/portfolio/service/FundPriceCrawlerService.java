@@ -128,18 +128,41 @@ public class FundPriceCrawlerService {
     }
 
     private void persistFundPrices(String fundCode, List<String> dates, List<Double> prices) {
+        // Get the latest price date for this fund from the database
+        Date latestPriceDate = null;
+        try {
+            FundPrice latestPrice = fundPriceRepository.findTopByFundCodeAndPriceDateLessThanEqualOrderByPriceDateDesc(
+                fundCode, 
+                new Date(System.currentTimeMillis())
+            );
+            if (latestPrice != null) {
+                latestPriceDate = latestPrice.getPriceDate();
+                log.info("Latest price date for fund {} is {}", fundCode, latestPriceDate);
+            }
+        } catch (Exception e) {
+            log.error("Error getting latest price date for fund {}: {}", fundCode, e.getMessage());
+        }
+
         for (int i = 0; i < dates.size(); i++) {
             try {
                 String[] dateParts = dates.get(i).split("\\.");
                 String formattedDate = String.format("%s-%s-%s", dateParts[2], dateParts[1], dateParts[0]);
+                Date currentDate = Date.valueOf(formattedDate);
+                
+                // Skip if the current date is not newer than the latest price date
+                if (latestPriceDate != null && !currentDate.after(latestPriceDate)) {
+                    log.debug("Skipping existing price for fund {} on date {}", fundCode, formattedDate);
+                    continue;
+                }
                 
                 FundPrice fundPrice = new FundPrice();
                 fundPrice.setFundCode(fundCode);
-                fundPrice.setPriceDate(Date.valueOf(formattedDate));
+                fundPrice.setPriceDate(currentDate);
                 fundPrice.setPrice(prices.get(i));
                 
                 try {
                     fundPriceRepository.save(fundPrice);
+                    log.info("Saved new price for fund {} on date {}", fundCode, formattedDate);
                 } catch (Exception e) {
                     if (e.getMessage().contains("duplicate key value")) {
                         log.info("Skipping duplicate entry for fund {} on date {}", fundCode, formattedDate);

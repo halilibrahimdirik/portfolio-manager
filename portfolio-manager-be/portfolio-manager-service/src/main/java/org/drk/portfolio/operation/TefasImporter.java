@@ -93,7 +93,7 @@ public class TefasImporter {
                     int endIndex = fundName.indexOf(")");
                     if (startIndex != -1 && endIndex != -1) {
                         String[] codes = fundName.substring(startIndex + 1, endIndex).split("/");
-                        fundCode = codes[0].trim();
+                        fundCode = codes[1].trim();
                     }
 
                     // Clean and parse numerical values
@@ -218,7 +218,7 @@ public class TefasImporter {
             if (endParenthesesIndex != -1) {
                 String codeSection = fullName.substring(lastParenthesesIndex + 1, endParenthesesIndex);
                 String[] codes = codeSection.split("/");
-                assetCode = codes[0].trim();
+                assetCode = codes[1].trim();
             } else {
                 assetCode = "";
             }

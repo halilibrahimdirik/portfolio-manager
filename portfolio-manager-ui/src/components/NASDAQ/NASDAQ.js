@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton, Tooltip } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -103,9 +103,13 @@ const Nasdaq = () => {
                 <TableRow key={stock.id}>
                   <TableCell>{stock.name}</TableCell>
                   <TableCell>{stock.quantity}</TableCell>
-                  <TableCell>${stock.currentPrice.toFixed(2)}</TableCell>
-                  <TableCell>${stock.purchasePrice.toFixed(2)}</TableCell>
-                  <TableCell>${(stock.currentPrice * stock.quantity).toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Tooltip title={stock.priceDate ? new Date(stock.priceDate).toLocaleString('tr-TR') : 'No date available'} arrow placement="top">
+                      <span>${Number(stock.currentPrice).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</span>
+                    </Tooltip>
+                  </TableCell>
+                  <TableCell>${Number(stock.purchasePrice).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</TableCell>
+                  <TableCell>${Number(stock.currentPrice * stock.quantity).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</TableCell>
                   <TableCell>{new Date(stock.purchaseDate).toLocaleDateString()}</TableCell>
                   <TableCell sx={{ color: profitColor }}>
                     {profitPercentage.toFixed(2)}%

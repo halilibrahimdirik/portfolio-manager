@@ -54,6 +54,13 @@ public class AssetController {
                 FundPrice latestPrice = fundPriceService.getLatestPrice(asset.getAssetCode(), priceDate);
                 if (latestPrice != null) {
                     asset.setCurrentPrice(BigDecimal.valueOf(latestPrice.getPrice()));
+                    asset.setPriceDate(latestPrice.getPriceDate());
+                    
+                    // Calculate monthly increase
+                    Double monthlyIncrease = fundPriceService.getMonthlyIncrease(asset.getAssetCode(), priceDate);
+                    if (monthlyIncrease != null) {
+                        asset.setMonthlyIncrease(monthlyIncrease);
+                    }
                 }
             }
         }

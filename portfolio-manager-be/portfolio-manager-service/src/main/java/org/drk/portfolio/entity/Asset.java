@@ -35,4 +35,7 @@ public class Asset {
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private AssetType type;
+    
+    @Column(name = "price_date")
+    private Date priceDate;
 }
