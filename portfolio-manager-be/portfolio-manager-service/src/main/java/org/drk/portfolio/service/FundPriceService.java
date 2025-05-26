@@ -26,7 +26,10 @@ public class FundPriceService {
 
         // Get price from one month ago
         LocalDate oneMonthAgo = currentDate.minusMonths(1);
-        FundPrice monthAgoPrice = getLatestPrice(fundCode, oneMonthAgo);
+        FundPrice monthAgoPrice = fundPriceRepository.findFirstByFundCodeAndPriceDateGreaterThanEqualOrderByPriceDate(
+            fundCode,
+            java.sql.Date.valueOf(oneMonthAgo)
+        );
         if (monthAgoPrice == null) return null;
 
         // Calculate percentage increase

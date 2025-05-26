@@ -38,4 +38,11 @@ public class Asset {
     
     @Column(name = "price_date")
     private Date priceDate;
+
+    @Column(name = "monthly_increase")
+    private Double monthlyIncrease;
+
+    public void setMonthlyIncrease(Double monthlyIncrease) {
+        this.monthlyIncrease = monthlyIncrease;
+    }
 }

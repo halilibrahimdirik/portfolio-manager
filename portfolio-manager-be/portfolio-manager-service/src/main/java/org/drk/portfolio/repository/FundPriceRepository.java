@@ -9,4 +9,5 @@ import java.sql.Date;
 @Repository
 public interface FundPriceRepository extends JpaRepository<FundPrice, Long> {
     FundPrice findTopByFundCodeAndPriceDateLessThanEqualOrderByPriceDateDesc(String fundCode, Date priceDate);
+    FundPrice findFirstByFundCodeAndPriceDateGreaterThanEqualOrderByPriceDate(String fundCode, Date priceDate);
 }
