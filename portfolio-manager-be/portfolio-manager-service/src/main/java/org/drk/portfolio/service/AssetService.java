@@ -28,4 +28,8 @@ public class AssetService {
     public void deleteAsset(String id) {
         assetRepository.deleteById(id);
     }
+    
+    public Asset getAssetByCode(String code) {
+        return assetRepository.findByAssetCode(code);
+    }
 }

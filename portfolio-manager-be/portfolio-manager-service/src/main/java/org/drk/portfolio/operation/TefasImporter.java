@@ -73,7 +73,6 @@ public class TefasImporter {
                 .build()) {
                 
             // Skip first two rows (empty line and header)
-            csvReader.skip(1);
             csvReader.readNext();
 
             String[] row;
@@ -89,10 +88,10 @@ public class TefasImporter {
                     
                     // Extract fund code from name (e.g., "YFBL7 / YVD" from the fund name)
                     String fundCode = "";
-                    int startIndex = fundName.indexOf("(");
-                    int endIndex = fundName.indexOf(")");
-                    if (startIndex != -1 && endIndex != -1) {
-                        String[] codes = fundName.substring(startIndex + 1, endIndex).split("/");
+                    int lastOpenParen = fundName.lastIndexOf("(");
+                    int lastCloseParen = fundName.lastIndexOf(")");
+                    if (lastOpenParen != -1 && lastCloseParen != -1) {
+                        String[] codes = fundName.substring(lastOpenParen + 1, lastCloseParen).split("/");
                         fundCode = codes[1].trim();
                     }
 

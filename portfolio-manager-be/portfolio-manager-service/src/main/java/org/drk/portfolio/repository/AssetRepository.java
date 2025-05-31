@@ -16,4 +16,7 @@ public interface AssetRepository extends JpaRepository<Asset, String> {
 
     @Query("SELECT DISTINCT a.assetCode FROM Asset a WHERE a.type = :type")
     List<String> findDistinctAssetCodesByType(@Param("type") AssetType type);
+    
+    @Query("SELECT a FROM Asset a WHERE a.assetCode = :code")
+    Asset findByAssetCode(@Param("code") String code);
 }

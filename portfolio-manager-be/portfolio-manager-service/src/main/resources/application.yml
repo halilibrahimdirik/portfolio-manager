@@ -18,7 +18,10 @@ logging:
     org.springframework.web: DEBUG
     org.springframework.ws.client: DEBUG
     org.springframework.ws.server: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+  max-string-length: 100000
 
 tefas:
   import:
-    pdf-path: ${user.dir}/portfolio-manager-service/src/main/resources/import/tefas/Fonlar_YKB.csv
+    pdf-path: ${user.dir}/portfolio-manager-service/src/main/resources/import/tefas/Fonlar_28_05_25.csv

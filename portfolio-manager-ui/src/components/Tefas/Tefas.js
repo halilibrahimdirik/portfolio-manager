@@ -1,16 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton, Grid, Tooltip } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Button, IconButton, Grid, Tooltip, Dialog, DialogContent } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import StockDialog from '../shared/StockDialog';
+import FundDetail from './FundDetail';
 
 const Tefas = () => {
   const [open, setOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState(null);
   const [stocks, setStocks] = useState([]);
   const [profitSummary, setProfitSummary] = useState(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedFundCode, setSelectedFundCode] = useState(null);
+
+  const handleRowClick = (fundCode) => {
+    setSelectedFundCode(fundCode);
+    setDetailOpen(true);
+  };
+
+  const handleDetailClose = () => {
+    setDetailOpen(false);
+    setSelectedFundCode(null);
+  };
 
   const fetchStocks = async () => {
     try {
@@ -142,7 +155,11 @@ const Tefas = () => {
               const profitColor = profitPercentage >= 0 ? 'success.main' : 'error.main';
               
               return (
-                <TableRow key={stock.id}>
+                <TableRow 
+                  key={stock.id}
+                  onClick={() => handleRowClick(stock.assetCode)}
+                  sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' } }}
+                >
                   <TableCell>{stock.assetName}</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>{stock.assetCode}</TableCell>
                   <TableCell>{stock.quantity}</TableCell>
@@ -163,14 +180,14 @@ const Tefas = () => {
                     <Box sx={{ display: 'flex' }}>
                       <IconButton 
                         size="small" 
-                        onClick={() => handleClickOpen(stock)}
+                        onClick={(e) => { e.stopPropagation(); handleClickOpen(stock); }}
                         color="primary"
                       >
                         <EditIcon />
                       </IconButton>
                       <IconButton 
                         size="small" 
-                        onClick={() => handleDelete(stock)}
+                        onClick={(e) => { e.stopPropagation(); handleDelete(stock); }}
                         color="error"
                       >
                         <DeleteIcon />
@@ -183,6 +200,17 @@ const Tefas = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog
+        open={detailOpen}
+        onClose={handleDetailClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogContent>
+          <FundDetail fundCode={selectedFundCode} />
+        </DialogContent>
+      </Dialog>
       <StockDialog
         open={open}
         handleClose={handleClose}
