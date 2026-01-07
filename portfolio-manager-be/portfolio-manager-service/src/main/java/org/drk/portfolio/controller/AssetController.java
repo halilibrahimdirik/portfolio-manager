@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
+import org.drk.portfolio.entity.AssetSource;
 
 import lombok.RequiredArgsConstructor;
 import org.drk.portfolio.entity.Asset;
@@ -37,8 +40,13 @@ public class AssetController {
     }
 
     @GetMapping("/{type}")
-    public List<Asset> getAssetsByType(@PathVariable String type) {
-        List<Asset> assets = assetService.getAssetsByType(type);
+    public List<Asset> getAssetsByType(@PathVariable String type, @RequestParam(required = false) String source) {
+        List<Asset> assets;
+        if (source != null && !source.isEmpty()) {
+            assets = assetService.getAssetsByTypeAndSource(type, source);
+        } else {
+            assets = assetService.getAssetsByType(type);
+        }
         
         if (AssetType.valueOf(type) == AssetType.TEFAS) {
             LocalDate priceDate = LocalDate.now();
@@ -85,7 +93,20 @@ public class AssetController {
     }
     
     @GetMapping("/{type}/profit-summary")
-    public ResponseEntity<AssetProfitSummary> getProfitSummary(@PathVariable AssetType type) {
+    public ResponseEntity<AssetProfitSummary> getProfitSummary(@PathVariable AssetType type, @RequestParam(required = false) String source) {
+        if (source != null && !source.isEmpty()) {
+            return ResponseEntity.ok(assetProfitService.calculateProfitSummary(type, org.drk.portfolio.entity.AssetSource.valueOf(source)));
+        }
         return ResponseEntity.ok(assetProfitService.calculateProfitSummary(type));
+    }
+
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> importAssets(@RequestParam("file") MultipartFile file, @RequestParam("source") String source) {
+        try {
+            assetService.importAssets(file, AssetSource.valueOf(source));
+            return ResponseEntity.ok("Assets imported successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to import assets: " + e.getMessage());
+        }
     }
 }

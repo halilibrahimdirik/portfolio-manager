@@ -17,7 +17,8 @@ import {
   PersonAdd as SignUpIcon,
   ShowChart as NasdaqIcon,
   Assessment as TefasIcon,
-  TrendingUp as BistIcon
+  TrendingUp as BistIcon,
+  AccountBalanceWallet as MidasIcon
 } from '@mui/icons-material';
 
 const drawerWidth = 244;
@@ -25,6 +26,7 @@ const drawerWidth = 244;
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
   { text: 'Tefas', icon: <TefasIcon />, path: '/tefas' },
+  { text: 'Tefas(Midas)', icon: <MidasIcon />, path: '/tefas-midas' },
   { text: 'Bist', icon: <BistIcon />, path: '/bist' },
   { text: 'Nasdaq', icon: <NasdaqIcon />, path: '/nasdaq' },
   { text: 'Notifications', icon: <NotificationsIcon />, path: '/notifications' },

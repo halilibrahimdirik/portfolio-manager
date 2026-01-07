@@ -19,7 +19,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/nasdaq" element={<Nasdaq />} />
             <Route path="/bist" element={<Bist />} />
-            <Route path="/tefas" element={<Tefas />} />
+            <Route path="/tefas" element={<Tefas source="YAPIKREDI" />} />
+            <Route path="/tefas-midas" element={<Tefas source="MIDAS" />} />
           </Routes>
         </Box>
       </Box>
