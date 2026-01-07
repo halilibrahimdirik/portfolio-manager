@@ -26,13 +26,11 @@ public class FundPriceController {
 
     @PostMapping("/crawl")
     public ResponseEntity<String> triggerCrawl() {
-        try {
-            fundPriceCrawlerService.crawlAndPersistFundPrices();
-            return ResponseEntity.ok("Fund price crawling completed successfully");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body("Error during fund price crawling: " + e.getMessage());
+        if (fundPriceCrawlerService.isCrawling()) {
+            return ResponseEntity.status(409).body("Fund price crawling already in progress");
         }
+        fundPriceCrawlerService.startAsyncCrawl();
+        return ResponseEntity.accepted().body("Fund price crawling started");
     }
 
     @GetMapping("/{fundCode}/returns")
@@ -55,5 +53,14 @@ public class FundPriceController {
             @PathVariable String fundCode,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate currentDate) {
         return ResponseEntity.ok(fundPriceService.getYearlyPrices(fundCode, currentDate));
+    }
+
+    @GetMapping("/crawl/status")
+    public ResponseEntity<Map<String, Object>> crawlStatus() {
+        Map<String, Object> status = new java.util.HashMap<>();
+        status.put("inProgress", fundPriceCrawlerService.isCrawling());
+        java.time.Instant lastCompleted = fundPriceCrawlerService.getLastCompletedAt();
+        status.put("lastCompletedAt", lastCompleted != null ? lastCompleted.toString() : null);
+        return ResponseEntity.ok(status);
     }
 }

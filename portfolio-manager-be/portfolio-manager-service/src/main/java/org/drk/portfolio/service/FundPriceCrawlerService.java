@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class FundPriceCrawlerService {
 
+    private volatile boolean crawling = false;
+    private volatile java.time.Instant lastCompletedAt = null;
 
     @Autowired
     private FundPriceRepository fundPriceRepository;
@@ -54,6 +56,35 @@ public class FundPriceCrawlerService {
                 break;
             }
         }
+    }
+
+    public synchronized boolean isCrawling() {
+        return crawling;
+    }
+
+    public synchronized java.time.Instant getLastCompletedAt() {
+        return lastCompletedAt;
+    }
+
+    public void startAsyncCrawl() {
+        synchronized (this) {
+            if (crawling) {
+                return;
+            }
+            crawling = true;
+        }
+        new Thread(() -> {
+            try {
+                crawlAndPersistFundPrices();
+            } catch (Exception ex) {
+                log.error("Async crawl error: {}", ex.getMessage());
+            } finally {
+                synchronized (this) {
+                    crawling = false;
+                    lastCompletedAt = java.time.Instant.now();
+                }
+            }
+        }, "FundPriceCrawler-Async").start();
     }
 
     public void crawlFundData(String fundCode) throws IOException {

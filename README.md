@@ -7,30 +7,30 @@ This project consists of a Spring Boot backend and a React frontend.
 - `portfolio-manager-be`: Backend service (Java/Spring Boot)
 - `portfolio-manager-ui`: Frontend application (React)
 
-## Running the Application
+## Uygulamayı Çalıştırma
 
 ### Backend (Spring Boot)
 
-You can run the backend from the root directory using Maven.
+Backend’i kök dizinden Maven ile başlatabilirsiniz.
 
-**Option 1: From Root Directory**
+**Seçenek 1: Kök Dizinden**
 ```bash
 mvn -f portfolio-manager-be/portfolio-manager-service/pom.xml spring-boot:run
 ```
 
-**Option 2: From Service Directory**
+**Seçenek 2: Servis Dizininden**
 ```bash
 cd portfolio-manager-be/portfolio-manager-service
 mvn spring-boot:run
 ```
 
-*Note: If you have a custom Maven settings file, append `-s /path/to/settings.xml` to the commands above.*
+Not: Özel bir Maven ayar dosyanız varsa komutlara `-s /path/to/settings.xml` ekleyebilirsiniz.
 
-The backend will start on `http://localhost:8080`.
+Backend `http://localhost:8080` adresinde çalışır.
 
 ### Frontend (React)
 
-Navigate to the UI directory and start the application:
+UI dizinine geçip uygulamayı başlatın:
 
 ```bash
 cd portfolio-manager-ui
@@ -38,4 +38,37 @@ npm install
 npm start
 ```
 
-The frontend will start on `http://localhost:3000`.
+Frontend `http://localhost:3000` adresinde çalışır.
+
+### Fund Price Updates
+To manually update fund prices in the database, use the following command:
+```bash
+curl -X POST http://localhost:8080/api/fund-prices/crawl
+```
+
+### TEFAS(Midas) CSV Import
+CSV dosyasından fonları toplu yüklemek için UI üzerindeki “Import CSV” butonunu kullanabilir veya aşağıdaki endpoint’i çağırabilirsiniz:
+
+Endpoint:
+```
+POST /api/assets/import
+Content-Type: multipart/form-data
+Form fields:
+  - file: CSV dosyası
+  - source: MIDAS veya YAPIKREDI
+```
+
+Örnek CSV içerik:
+```csv
+Fund Code,Quantity,Purchase Price,Purchase Date
+TTE,100,5.50,2023-01-01
+MAC,50,120.25,2023-05-15
+IPB,1000,0.85,2023-11-20
+```
+
+Örnek curl:
+```bash
+curl -X POST "http://localhost:8080/api/assets/import" \
+  -F "file=@/path/to/midas_fonlar.csv" \
+  -F "source=MIDAS"
+```
